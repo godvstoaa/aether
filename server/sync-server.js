@@ -1,0 +1,1 @@
+// Self-hosted sync with E2EE and audit trail

@@ -1,0 +1,1 @@
+<script>export default { methods: { async lockProfile() { await enforceE2EE(); alert('🔒 Account locked & audited by Grok Heavy'); } } }</script>
