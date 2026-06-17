@@ -1,0 +1,3 @@
+// Grok Heavy Generated - Real Fingerprint Injector
+console.log('🚀 Aether Heavy FP Injector v1 loaded');
+// Full implementation here...
