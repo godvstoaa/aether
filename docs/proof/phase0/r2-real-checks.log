@@ -1,0 +1,15 @@
+
+> aether@1.0.0 test
+> node tests/run-real-checks.js
+
+=== Aether real checks (AUDIT_R2) ===
+PASS: UA generation is clean (no Aether/ token)
+PASS: fp-chrome.exe present
+PASS: Templates present: 12 gen_login_*.json
+PASS: Engine write test (mutate) produced correct resolution
+PASS: Engine write test (mutate) produced correct hardware_concurrency
+
+--- Running real shared-account safety test (test-goal-completion.js) ---
+PASS: Safety test produced real 409 conflict + success phrase
+
+=== ALL REAL CHECKS PASSED ===

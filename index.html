@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aether • Anti-Detect Profiles</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root { color-scheme: dark; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .sidebar { background: #111113; }
+    .main-bg { background: #0a0a0b; }
+    .row-hover:hover { background: #161618; }
+    .gen-table th { background: #161618; color: #9ca3af; font-weight: 500; font-size: 12px; }
+    .status-ready { background: #1f2937; color: #9ca3af; font-size: 11px; padding: 1px 8px; border-radius: 9999px; }
+    .status-running { background: #166534; color: #86efac; font-size: 11px; padding: 1px 8px; border-radius: 9999px; }
+    .btn-start { background: #2563eb; color: white; font-size: 12px; padding: 3px 14px; border-radius: 6px; }
+    .btn-start:hover { background: #1d4ed8; }
+    .btn-stop { background: #b91c1c; color: white; font-size: 12px; padding: 3px 14px; border-radius: 6px; }
+    .btn-stop:hover { background: #991b1b; }
+    .top-banner { background: linear-gradient(90deg, #0f172a, #1e3a8a); }
+    .profile-dot { width: 16px; height: 16px; background: #3b82f6; border-radius: 9999px; display: inline-flex; align-items: center; justify-content: center; font-size: 9px; color: white; margin-right: 6px; }
+    .tab-active { border-bottom: 3px solid #3b82f6; color: white; }
+    .gen-input { background: #1f1f22; border: 1px solid #27272a; color: #e5e7eb; }
+    .gen-input:focus { outline: none; border-color: #3b82f6; }
+    .modal { background: rgba(0,0,0,0.7); }
+    .menu-item.active { background:#1e3a8a; color:#fff; }
+    label.fld { font-size:11px; color:#9ca3af; display:block; margin-bottom:2px; }
+    ::-webkit-scrollbar { width:10px; height:10px; } ::-webkit-scrollbar-thumb { background:#27272a; border-radius:6px; }
+  </style>
+</head>
+<body class="bg-[#0a0a0b] text-[#e5e7eb] overflow-hidden">
+  <div class="flex h-screen text-sm">
+    <!-- SIDEBAR -->
+    <div class="sidebar w-60 flex-shrink-0 border-r border-[#27272a] flex flex-col">
+      <div class="px-4 py-4 flex items-center gap-2 border-b border-[#27272a]">
+        <div class="w-7 h-7 rounded-full bg-[#3b82f6] flex items-center justify-center text-white text-xs font-bold">A</div>
+        <div class="font-semibold text-lg tracking-tight">Aether</div>
+      </div>
+
+      <div class="p-2">
+        <button onclick="openEditor()" class="w-full flex items-center justify-center gap-2 bg-[#3b82f6] hover:bg-[#2563eb] text-white py-2 rounded-md text-sm font-medium">
+          <i class="fa fa-plus"></i><span>Tạo Hồ Sơ</span>
+        </button>
+      </div>
+
+      <div class="px-1 text-[#9ca3af]" id="sidebar-menu">
+        <div onclick="setActiveView('profiles')" class="menu-item active flex items-center gap-2 px-3 py-2 mx-1 rounded-md cursor-pointer" data-view="profiles"><i class="fa fa-users w-4"></i><span class="font-medium">Hồ Sơ</span></div>
+        <div onclick="setActiveView('proxy')" class="menu-item flex items-center gap-2 px-3 py-2 mx-1 rounded-md hover:bg-[#1f1f22] cursor-pointer" data-view="proxy"><i class="fa fa-globe w-4"></i><span>Quản lý proxy</span></div>
+        <div onclick="setActiveView('automation')" class="menu-item flex items-center gap-2 px-3 py-2 mx-1 rounded-md hover:bg-[#1f1f22] cursor-pointer" data-view="automation"><i class="fa fa-magic w-4"></i><span>Tự Động Hóa</span></div>
+        <div onclick="setActiveView('members')" class="menu-item flex items-center gap-2 px-3 py-2 mx-1 rounded-md hover:bg-[#1f1f22] cursor-pointer" data-view="members"><i class="fa fa-users-cog w-4"></i><span>Thành Viên Nhóm</span></div>
+        <div onclick="setActiveView('sync')" class="menu-item flex items-center gap-2 px-3 py-2 mx-1 rounded-md hover:bg-[#1f1f22] cursor-pointer" data-view="sync"><i class="fa fa-sync w-4"></i><span>Đồng Bộ Hóa</span></div>
+        <div onclick="setActiveView('settings')" class="menu-item flex items-center gap-2 px-3 py-2 mx-1 rounded-md hover:bg-[#1f1f22] cursor-pointer" data-view="settings"><i class="fa fa-cog w-4"></i><span>Cài Đặt</span></div>
+      </div>
+
+      <div class="mt-auto p-3 text-[10px] text-[#555] border-t border-[#27272a]">
+        Engine: <span id="engine-path">đang kiểm tra…</span>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="flex-1 flex flex-col min-w-0">
+      <div class="h-12 border-b border-[#27272a] px-4 flex items-center justify-between bg-[#111113]">
+        <div class="flex items-center gap-3 text-xs">
+          <span class="text-emerald-400">Aether — Anti-Detect Profile Manager</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="openEditor()" class="px-4 py-1 text-sm bg-[#7c3aed] hover:bg-[#6d28d9] text-white rounded-md flex items-center gap-1.5"><i class="fa fa-bolt"></i><span>Thêm Nhanh</span></button>
+          <button onclick="reload()" class="p-1.5 text-gray-400 hover:text-white" title="Tải lại"><i class="fa fa-rotate-right"></i></button>
+        </div>
+      </div>
+
+      <!-- TABS + toolbar -->
+      <div class="px-4 pt-3 pb-1 bg-[#0a0a0b] border-b border-[#27272a]">
+        <div class="flex items-center gap-6 text-sm">
+          <div onclick="switchTab('cloud')" class="flex items-center gap-1.5 cursor-pointer pb-1" id="tab-cloud"><i class="fa fa-cloud text-blue-400"></i><span>0 Đám Mây</span></div>
+          <div onclick="switchTab('local')" class="flex items-center gap-1.5 cursor-pointer text-gray-400 hover:text-white pb-1 tab-active" id="tab-local"><i class="fa fa-desktop"></i><span>0 Cục Bộ</span></div>
+          <div onclick="switchTab('groups')" class="flex items-center gap-1.5 cursor-pointer text-gray-400 hover:text-white pb-1" id="tab-groups"><i class="fa fa-folder"></i><span>0 Nhóm</span></div>
+        </div>
+        <div class="mt-2 flex items-center gap-2">
+          <div class="flex items-center gap-1 border border-[#27272a] bg-[#161618] rounded px-2 py-1 text-xs">
+            <i class="fa fa-search text-gray-500"></i>
+            <input id="search" onkeyup="filterTable()" placeholder="Tìm kiếm (nhấn /)" class="bg-transparent border-0 text-sm focus:outline-none placeholder:text-gray-500 w-56" />
+          </div>
+          <select id="group-filter" onchange="renderTable()" class="gen-input text-xs rounded px-2 py-1"><option value="">Tất cả nhóm</option></select>
+          <div class="ml-auto text-xs text-gray-500" id="toolbar-hint">Mở nhiều profile cùng lúc, mỗi cái fingerprint + proxy riêng</div>
+        </div>
+        <!-- bulk toolbar -->
+        <div id="bulk-bar" class="mt-2 hidden items-center gap-2 text-xs bg-[#161618] border border-[#27272a] rounded px-2 py-1.5">
+          <span id="bulk-count" class="text-gray-300"></span>
+          <button onclick="bulkStart()" class="px-2 py-0.5 rounded bg-[#2563eb]">Mở</button>
+          <button onclick="bulkStop()" class="px-2 py-0.5 rounded bg-[#b91c1c]">Dừng</button>
+          <button onclick="bulkSetGroup()" class="px-2 py-0.5 rounded bg-[#27272a]">Đổi nhóm</button>
+          <button onclick="bulkSetProxy()" class="px-2 py-0.5 rounded bg-[#27272a]">Đổi proxy</button>
+          <button onclick="bulkExport()" class="px-2 py-0.5 rounded bg-[#27272a]">Export JSON</button>
+          <button onclick="bulkDelete()" class="px-2 py-0.5 rounded bg-[#27272a] text-red-400">Xóa</button>
+          <button onclick="clearSelection()" class="ml-auto text-gray-500">Bỏ chọn</button>
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="flex-1 overflow-auto p-1 main-bg">
+        <table class="w-full text-xs gen-table border-collapse">
+          <thead><tr class="text-left">
+            <th class="w-6 pl-3"><input type="checkbox" id="check-all" onclick="toggleAll(this)"></th>
+            <th class="px-2 py-2">Tên</th>
+            <th class="px-2 py-2">Nền tảng</th>
+            <th class="px-2 py-2">Thẻ</th>
+            <th class="px-2 py-2">Ghi Chú</th>
+            <th class="px-2 py-2">Proxy</th>
+            <th class="px-2 py-2">Cập Nhật</th>
+            <th class="px-2 py-2">Lần mở cuối</th>
+            <th class="px-2 py-2">Trạng Thái</th>
+            <th class="w-28"></th>
+            <th class="w-8 pr-3"></th>
+          </tr></thead>
+          <tbody id="table-body" class="divide-y divide-[#27272a]"></tbody>
+        </table>
+      </div>
+
+      <div class="h-6 border-t border-[#27272a] px-3 text-[10px] flex items-center text-gray-500 bg-[#111113]">
+        <span id="status-text">Sẵn sàng</span>
+        <span class="ml-auto cursor-pointer underline" onclick="Aether.openProfilesFolder()">Mở thư mục profiles</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PROFILE EDITOR MODAL ===== -->
+  <div id="editor" onclick="if(event.target.id==='editor') closeEditor()" class="modal hidden fixed inset-0 z-50 flex items-center justify-center">
+    <div class="bg-[#161618] border border-[#27272a] rounded-lg w-full max-w-2xl p-5 max-h-[90vh] overflow-auto">
+      <div class="flex items-center justify-between mb-3">
+        <div class="font-medium" id="editor-title">Tạo Hồ Sơ</div>
+        <span onclick="closeEditor()" class="cursor-pointer text-gray-400">✕</span>
+      </div>
+      <input type="hidden" id="f-id">
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="fld">Tên hồ sơ</label><input id="f-name" class="gen-input w-full px-2 py-1.5 rounded text-sm"></div>
+        <div><label class="fld">Nhóm</label><input id="f-group" list="group-list" class="gen-input w-full px-2 py-1.5 rounded text-sm" placeholder="Vietnam Ads…"><datalist id="group-list"></datalist></div>
+        <div><label class="fld">Lưu trữ</label><select id="f-location" class="gen-input w-full px-2 py-1.5 rounded text-sm"><option value="local">Cục bộ</option><option value="cloud">Đám mây</option></select></div>
+        <div><label class="fld">Hệ điều hành</label><select id="f-platform" class="gen-input w-full px-2 py-1.5 rounded text-sm"><option>Windows</option><option>macOS</option></select></div>
+        <div><label class="fld">Độ phân giải</label><select id="f-res" class="gen-input w-full px-2 py-1.5 rounded text-sm">
+          <option>1920x1080</option><option>1366x768</option><option>1440x900</option><option>1536x864</option><option>1280x720</option><option>2560x1440</option></select></div>
+        <div><label class="fld">Múi giờ</label><select id="f-tz" class="gen-input w-full px-2 py-1.5 rounded text-sm"></select></div>
+        <div><label class="fld">Ngôn ngữ</label><input id="f-lang" class="gen-input w-full px-2 py-1.5 rounded text-sm" value="vi-VN"></div>
+        <div><label class="fld">CPU cores</label><select id="f-hw" class="gen-input w-full px-2 py-1.5 rounded text-sm"><option>2</option><option>4</option><option selected>8</option><option>12</option><option>16</option></select></div>
+        <div><label class="fld">RAM (GB)</label><select id="f-mem" class="gen-input w-full px-2 py-1.5 rounded text-sm"><option>4</option><option selected>8</option><option>16</option><option>32</option></select></div>
+        <div><label class="fld">Thẻ (cách nhau dấu phẩy)</label><input id="f-tags" class="gen-input w-full px-2 py-1.5 rounded text-sm" placeholder="ads, fb"></div>
+        <div class="col-span-2"><label class="fld">URL khởi động</label><input id="f-url" class="gen-input w-full px-2 py-1.5 rounded text-sm" placeholder="https://ipinfo.io/json"></div>
+        <div class="col-span-2">
+          <label class="fld">Proxy (http/https/socks5, hỗ trợ user:pass)</label>
+          <div class="flex gap-2">
+            <input id="f-proxy" class="gen-input flex-1 px-2 py-1.5 rounded text-sm" placeholder="Local IP hoặc socks5://user:pass@host:port">
+            <button onclick="testProxyInEditor()" class="px-3 py-1.5 rounded bg-[#27272a] text-xs whitespace-nowrap">Kiểm tra</button>
+          </div>
+          <div id="proxy-result" class="text-[11px] mt-1 text-gray-400"></div>
+        </div>
+        <div class="col-span-2"><label class="fld">Ghi chú</label><input id="f-note" class="gen-input w-full px-2 py-1.5 rounded text-sm" value="Enter note"></div>
+      </div>
+      <div class="mt-4 flex justify-end gap-2">
+        <button onclick="closeEditor()" class="px-4 py-1.5 text-xs rounded bg-[#27272a]">Hủy</button>
+        <button onclick="saveEditor()" class="px-4 py-1.5 text-xs rounded bg-[#3b82f6]">Lưu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== GENERIC PANEL (proxy / automation / settings / members) ===== -->
+  <div id="panel" onclick="if(event.target.id==='panel') closePanel()" class="modal hidden fixed inset-0 z-50 flex items-center justify-center">
+    <div class="bg-[#161618] border border-[#27272a] rounded-lg w-full max-w-2xl p-5 max-h-[90vh] overflow-auto">
+      <div class="flex items-center justify-between mb-3">
+        <div class="font-medium" id="panel-title"></div>
+        <span onclick="closePanel()" class="cursor-pointer text-gray-400">✕</span>
+      </div>
+      <div id="panel-body" class="text-sm"></div>
+    </div>
+  </div>
+
+  <script>
+    const A = window.Aether;
+    let profiles = [], runningIds = new Set(), currentTab = 'local', currentFilter = '', selected = new Set();
+
+    const TIMEZONES = ['Asia/Ho_Chi_Minh','Asia/Bangkok','Asia/Singapore','Asia/Tokyo','Asia/Seoul','Asia/Shanghai','Asia/Jakarta','Asia/Manila','Asia/Kolkata','Europe/London','Europe/Paris','Europe/Berlin','Europe/Madrid','Europe/Moscow','America/New_York','America/Chicago','America/Los_Angeles','America/Sao_Paulo','Australia/Sydney'];
+
+    function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+    async function reload() {
+      profiles = await A.getProfiles();
+      const run = await A.getRunning();
+      runningIds = new Set(run.map(r => r.id));
+      refreshGroups();
+      renderTable();
+      updateCounts();
+    }
+    const load = reload;
+
+    function refreshGroups() {
+      const groups = [...new Set(profiles.map(p => p.group_name).filter(Boolean))];
+      const gf = document.getElementById('group-filter');
+      gf.innerHTML = '<option value="">Tất cả nhóm</option>' + groups.map(g=>`<option>${esc(g)}</option>`).join('');
+      document.getElementById('group-list').innerHTML = groups.map(g=>`<option value="${esc(g)}">`).join('');
+    }
+
+    function updateCounts() {
+      const cloud = profiles.filter(p=>p.location==='cloud').length;
+      const local = profiles.filter(p=>p.location==='local').length;
+      const groups = new Set(profiles.map(p=>p.group_name).filter(Boolean)).size;
+      document.getElementById('tab-cloud').innerHTML = `<i class="fa fa-cloud text-blue-400"></i><span>${cloud} Đám Mây</span>`;
+      document.getElementById('tab-local').innerHTML = `<i class="fa fa-desktop"></i><span>${local} Cục Bộ</span>`;
+      document.getElementById('tab-groups').innerHTML = `<i class="fa fa-folder"></i><span>${groups} Nhóm</span>`;
+    }
+
+    function switchTab(tab) {
+      currentTab = tab; selected.clear();
+      ['cloud','local','groups'].forEach(t=>document.getElementById('tab-'+t).classList.remove('tab-active'));
+      document.getElementById('tab-'+tab).classList.add('tab-active');
+      renderTable();
+    }
+    function filterTable(){ currentFilter = document.getElementById('search').value.toLowerCase(); renderTable(); }
+
+    function visibleProfiles() {
+      let f = profiles;
+      if (currentTab==='cloud') f = f.filter(p=>p.location==='cloud');
+      else if (currentTab==='local') f = f.filter(p=>p.location==='local');
+      // groups tab: show all (grouped)
+      const gf = document.getElementById('group-filter').value;
+      if (gf) f = f.filter(p=>p.group_name===gf);
+      if (currentFilter) f = f.filter(p => (p.name||'').toLowerCase().includes(currentFilter) || (p.note||'').toLowerCase().includes(currentFilter) || (p.proxy||'').toLowerCase().includes(currentFilter) || (p.tags||'').toLowerCase().includes(currentFilter));
+      return f;
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('table-body');
+      const list = visibleProfiles();
+      tbody.innerHTML = '';
+      if (!list.length) { tbody.innerHTML = `<tr><td colspan="11" class="px-4 py-8 text-center text-gray-500">Không có hồ sơ. Nhấn "Tạo Hồ Sơ".</td></tr>`; updateBulkBar(); return; }
+      list.forEach(p => {
+        const isRun = runningIds.has(p.id);
+        const tr = document.createElement('tr');
+        tr.className = 'row-hover border-b border-[#27272a]';
+        tr.innerHTML = `
+          <td class="pl-3"><input type="checkbox" ${selected.has(p.id)?'checked':''} onclick="toggleSel('${p.id}', this.checked)"></td>
+          <td class="px-2 py-2 font-medium"><span class="profile-dot">${esc((p.name||'?')[0])}</span><span class="cursor-pointer hover:underline" onclick="openEditor('${p.id}')">${esc(p.name)}</span></td>
+          <td class="px-2 py-2 text-gray-400">${esc(p.platform||'-')}</td>
+          <td class="px-2 py-2 text-gray-400">${esc(p.tags||'-')}</td>
+          <td class="px-2 py-2 text-gray-400 cursor-pointer" onclick="openEditor('${p.id}')">${esc(p.note||'Enter note')}</td>
+          <td class="px-2 py-2 ${p.proxy && p.proxy!=='Local IP'?'text-emerald-400':'text-gray-500'}">${esc(p.proxy||'Local IP')}</td>
+          <td class="px-2 py-2 text-gray-400">${esc(p.updatedRel||'-')}</td>
+          <td class="px-2 py-2 text-gray-400">${esc(p.lastOpenedRel||'-')}</td>
+          <td class="px-2 py-2"><span class="${isRun?'status-running':'status-ready'}">${isRun?'Running':'Ready'}</span></td>
+          <td class="px-1 py-2">${isRun
+            ? `<button onclick="stop('${p.id}')" class="btn-stop">Dừng</button>`
+            : `<button onclick="launch('${p.id}')" class="btn-start">Bắt Đầu</button>`}</td>
+          <td class="pr-3 text-right"><button onclick="rowMenu('${p.id}', this)" class="px-2 py-1 text-gray-400 hover:text-white">⋯</button></td>`;
+        tbody.appendChild(tr);
+      });
+      document.getElementById('status-text').textContent = `${list.length} hiển thị • ${profiles.length} tổng • ${runningIds.size} đang chạy`;
+      updateBulkBar();
+    }
+
+    // selection
+    function toggleSel(id, on){ on?selected.add(id):selected.delete(id); updateBulkBar(); }
+    function toggleAll(cb){ const l=visibleProfiles(); if(cb.checked) l.forEach(p=>selected.add(p.id)); else l.forEach(p=>selected.delete(p.id)); renderTable(); }
+    function clearSelection(){ selected.clear(); document.getElementById('check-all').checked=false; renderTable(); }
+    function updateBulkBar(){
+      const bar=document.getElementById('bulk-bar');
+      if(selected.size>0){ bar.classList.remove('hidden'); bar.classList.add('flex'); document.getElementById('bulk-count').textContent=`Đã chọn ${selected.size}`; }
+      else { bar.classList.add('hidden'); bar.classList.remove('flex'); }
+    }
+
+    // launch / stop
+    async function launch(id){
+      const p = profiles.find(x=>x.id===id); if(!p) return;
+      setHint('Đang mở '+p.name+'…');
+      const res = await A.launchProfile(p);
+      if(!res.ok){ alert('Mở thất bại: '+(res.error||'?')); }
+      else setHint(`Đã mở ${p.name} • CDP: ${res.cdpUrl} • engine: ${res.engine||'?'}`);
+      await reload();
+    }
+    async function stop(id){ await A.stopProfile(id); await reload(); }
+
+    async function bulkStart(){ for(const id of [...selected]){ const p=profiles.find(x=>x.id===id); if(p && !runningIds.has(id)) await A.launchProfile(p); } await reload(); }
+    async function bulkStop(){ for(const id of [...selected]){ if(runningIds.has(id)) await A.stopProfile(id); } await reload(); }
+    async function bulkDelete(){ if(!confirm(`Xóa ${selected.size} hồ sơ?`)) return; for(const id of [...selected]) await A.deleteProfile(id); selected.clear(); await reload(); }
+    async function bulkSetGroup(){ const g=prompt('Tên nhóm mới cho các hồ sơ đã chọn:'); if(g===null) return; for(const id of [...selected]){ const p=profiles.find(x=>x.id===id); if(p){ p.group_name=g; await A.saveProfile(p); } } await reload(); }
+    async function bulkSetProxy(){ const px=prompt('Proxy mới (áp cho tất cả đã chọn):'); if(px===null) return; for(const id of [...selected]){ const p=profiles.find(x=>x.id===id); if(p){ p.proxy=px; await A.saveProfile(p); } } await reload(); }
+    function bulkExport(){
+      const data = profiles.filter(p=>selected.has(p.id));
+      const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='aether-profiles.json'; a.click();
+    }
+
+    // row menu
+    function rowMenu(id, btn){
+      document.querySelectorAll('.row-menu').forEach(m=>m.remove());
+      const menu=document.createElement('div');
+      menu.className='row-menu absolute bg-[#1f1f22] border border-[#27272a] rounded shadow-lg text-xs py-1 z-50';
+      const r=btn.getBoundingClientRect();
+      menu.style.left=(r.left-130)+'px'; menu.style.top=(r.bottom+4)+'px';
+      menu.innerHTML=`
+        <div class="px-3 py-1 hover:bg-[#27272a] cursor-pointer" onclick="openEditor('${id}');this.parentNode.remove()">Chỉnh sửa</div>
+        <div class="px-3 py-1 hover:bg-[#27272a] cursor-pointer" onclick="duplicate('${id}');this.parentNode.remove()">Nhân bản</div>
+        <div class="px-3 py-1 hover:bg-[#27272a] cursor-pointer" onclick="pushCloud('${id}');this.parentNode.remove()">Đẩy lên Cloud</div>
+        <div class="px-3 py-1 hover:bg-[#27272a] cursor-pointer text-red-400" onclick="delOne('${id}');this.parentNode.remove()">Xóa</div>`;
+      document.body.appendChild(menu);
+      setTimeout(()=>document.addEventListener('click',function h(e){ if(!menu.contains(e.target)){menu.remove();document.removeEventListener('click',h);} },{once:true}),0);
+    }
+    async function duplicate(id){ const o=profiles.find(x=>x.id===id); const c={...o,id:'p'+Date.now(),name:o.name+' copy',last_opened:null,status:'Ready'}; await A.saveProfile(c); await reload(); }
+    async function delOne(id){ if(!confirm('Xóa hồ sơ này?')) return; await A.deleteProfile(id); await reload(); }
+    async function pushCloud(id){ const p=profiles.find(x=>x.id===id); if(!p) return; try{ await A.syncPushProfile(p); alert('Đã đẩy lên cloud.'); await reload(); }catch(e){ alert('Lỗi: '+e.message+'\\n(Cần đăng nhập Sync trước)'); } }
+
+    // ===== Editor =====
+    function buildTzOptions(sel){ return TIMEZONES.map(t=>`<option ${t===sel?'selected':''}>${t}</option>`).join(''); }
+    function openEditor(id){
+      const isNew = !id;
+      const p = isNew ? { id:'p'+Date.now(), name:'profile-'+Date.now().toString(36).slice(-4), location: currentTab==='cloud'?'cloud':'local', platform:'Windows', resolution:'1920x1080', timezone:'Asia/Ho_Chi_Minh', lang:'vi-VN', hardware_concurrency:8, device_memory:8, tags:'', startup_url:'', proxy:'Local IP', note:'Enter note', group_name:'' } : profiles.find(x=>x.id===id);
+      document.getElementById('editor-title').textContent = isNew?'Tạo Hồ Sơ':'Chỉnh sửa: '+p.name;
+      document.getElementById('f-id').value = p.id;
+      document.getElementById('f-name').value = p.name||'';
+      document.getElementById('f-group').value = p.group_name||'';
+      document.getElementById('f-location').value = p.location||'local';
+      document.getElementById('f-platform').value = (p.platform&&p.platform.toLowerCase().includes('mac'))?'macOS':'Windows';
+      document.getElementById('f-res').value = p.resolution||'1920x1080';
+      document.getElementById('f-tz').innerHTML = buildTzOptions(p.timezone||'Asia/Ho_Chi_Minh');
+      document.getElementById('f-lang').value = p.lang||'vi-VN';
+      document.getElementById('f-hw').value = String(p.hardware_concurrency||8);
+      document.getElementById('f-mem').value = String(p.device_memory||8);
+      document.getElementById('f-tags').value = p.tags||'';
+      document.getElementById('f-url').value = p.startup_url||'';
+      document.getElementById('f-proxy').value = p.proxy||'Local IP';
+      document.getElementById('f-note').value = p.note||'';
+      document.getElementById('proxy-result').textContent='';
+      show('editor');
+    }
+    function closeEditor(){ hide('editor'); }
+    async function saveEditor(){
+      const existing = profiles.find(x=>x.id===document.getElementById('f-id').value) || {};
+      const p = { ...existing,
+        id: document.getElementById('f-id').value,
+        name: document.getElementById('f-name').value.trim()||'profile',
+        group_name: document.getElementById('f-group').value.trim(),
+        location: document.getElementById('f-location').value,
+        platform: document.getElementById('f-platform').value,
+        resolution: document.getElementById('f-res').value,
+        timezone: document.getElementById('f-tz').value,
+        lang: document.getElementById('f-lang').value.trim()||'en-US',
+        hardware_concurrency: parseInt(document.getElementById('f-hw').value,10),
+        device_memory: parseInt(document.getElementById('f-mem').value,10),
+        tags: document.getElementById('f-tags').value.trim(),
+        startup_url: document.getElementById('f-url').value.trim(),
+        proxy: document.getElementById('f-proxy').value.trim()||'Local IP',
+        note: document.getElementById('f-note').value.trim()||'Enter note',
+        updated: new Date().toISOString()
+      };
+      await A.saveProfile(p);
+      closeEditor(); await reload();
+    }
+    async function testProxyInEditor(){
+      const v = document.getElementById('f-proxy').value.trim();
+      const out = document.getElementById('proxy-result');
+      if(!v || v.toLowerCase()==='local ip'){ out.textContent='Không có proxy.'; return; }
+      out.textContent='Đang kiểm tra…'; out.className='text-[11px] mt-1 text-gray-400';
+      const r = await A.testProxy(v);
+      if(r.alive){
+        out.className='text-[11px] mt-1 text-emerald-400';
+        out.innerHTML = `✓ Sống • IP ${esc(r.ip||'?')} • ${esc(r.country||'')} ${esc(r.city||'')} • TZ ${esc(r.timezone||'?')} • ${r.ping||'?'}ms ` +
+          (r.timezone?`<button onclick="applyGeo('${esc(r.timezone)}')" class="ml-2 underline">Áp timezone</button>`:'');
+      } else {
+        out.className='text-[11px] mt-1 text-red-400';
+        out.textContent = '✗ Lỗi: '+(r.error||'không xác định');
+      }
+    }
+    function applyGeo(tz){
+      if(![...document.getElementById('f-tz').options].some(o=>o.value===tz)){
+        const opt=document.createElement('option'); opt.value=tz; opt.textContent=tz; document.getElementById('f-tz').appendChild(opt);
+      }
+      document.getElementById('f-tz').value=tz;
+      document.getElementById('proxy-result').innerHTML += ' — đã áp timezone';
+    }
+
+    // ===== Panels =====
+    function show(id){ const m=document.getElementById(id); m.classList.remove('hidden'); m.classList.add('flex'); }
+    function hide(id){ const m=document.getElementById(id); m.classList.add('hidden'); m.classList.remove('flex'); }
+    function closePanel(){ hide('panel'); }
+    function openPanel(title, html){ document.getElementById('panel-title').textContent=title; document.getElementById('panel-body').innerHTML=html; show('panel'); }
+
+    function setActiveView(view){
+      document.querySelectorAll('#sidebar-menu .menu-item').forEach(el=>el.classList.toggle('active', el.dataset.view===view));
+      if(view==='profiles') return;
+      if(view==='proxy') return openProxyPanel();
+      if(view==='automation') return openAutomationPanel();
+      if(view==='settings') return openSettingsPanel();
+      if(view==='sync') return openSyncPanel();
+      if(view==='members') return openMembersPanel();
+    }
+
+    async function openProxyPanel(){
+      const withProxy = profiles.filter(p=>p.proxy && p.proxy!=='Local IP');
+      const rows = withProxy.map(p=>`<tr class="border-b border-[#27272a]">
+        <td class="py-1 pr-2">${esc(p.name)}</td>
+        <td class="py-1 pr-2 text-gray-400">${esc(p.proxy)}</td>
+        <td class="py-1"><button onclick="testRowProxy('${p.id}', this)" class="px-2 py-0.5 rounded bg-[#27272a] text-xs">Test</button> <span class="proxy-stat text-[11px] ml-1"></span></td>
+      </tr>`).join('');
+      openPanel('Quản lý Proxy', `
+        <div class="text-xs text-gray-400 mb-2">${withProxy.length} hồ sơ có proxy. Proxy có auth (user:pass) sẽ được xác thực qua extension MV3 khi mở.</div>
+        <table class="w-full text-xs"><thead><tr class="text-left text-gray-500"><th class="pr-2">Hồ sơ</th><th class="pr-2">Proxy</th><th>Test</th></tr></thead><tbody>${rows||'<tr><td class="py-2 text-gray-500">Chưa có proxy nào.</td></tr>'}</tbody></table>`);
+    }
+    async function testRowProxy(id, btn){
+      const p=profiles.find(x=>x.id===id); const stat=btn.parentNode.querySelector('.proxy-stat');
+      stat.textContent='…'; stat.className='proxy-stat text-[11px] ml-1 text-gray-400';
+      const r=await A.testProxy(p.proxy);
+      stat.className='proxy-stat text-[11px] ml-1 '+(r.alive?'text-emerald-400':'text-red-400');
+      stat.textContent = r.alive?`✓ ${r.ip||''} ${r.country||''} ${r.ping||''}ms`:`✗ ${r.error||''}`;
+    }
+
+    async function openAutomationPanel(){
+      const info = await A.getApiInfo();
+      const base=`http://127.0.0.1:${info.port}`;
+      openPanel('Tự Động Hóa — Local API', `
+        <div class="text-xs text-gray-400 mb-2">Mở/đóng profile và lấy CDP endpoint cho Selenium/Puppeteer/Playwright.</div>
+        <div class="bg-[#0f0f10] border border-[#27272a] rounded p-3 text-xs font-mono leading-relaxed">
+          <div>Base: <span class="text-emerald-400">${base}</span></div>
+          <div>Token: <span class="text-amber-400 break-all">${esc(info.token)}</span></div>
+          <div class="mt-2 text-gray-500"># Mở profile &lt;id&gt; và nhận wsEndpoint/cdp:</div>
+          <div>curl -X POST ${base}/v1/profiles/&lt;id&gt;/start \\<br>&nbsp;&nbsp;-H "Authorization: Bearer ${esc(info.token.slice(0,8))}…"</div>
+          <div class="mt-2 text-gray-500"># Sau đó kết nối Playwright:</div>
+          <div>const b = await chromium.connectOverCDP(res.cdpUrl)</div>
+        </div>
+        <div class="text-[11px] text-gray-500 mt-2">Endpoints: GET /v1/profiles · POST /v1/profiles/:id/start · POST /v1/profiles/:id/stop · GET /v1/profiles/:id/status · GET /v1/health</div>`);
+    }
+
+    async function openSettingsPanel(){
+      const chrome = await A.getChromePath();
+      const info = await A.getApiInfo();
+      openPanel('Cài Đặt', `
+        <div class="space-y-3 text-xs">
+          <div><div class="text-gray-500">Engine trình duyệt</div><div class="text-emerald-400 break-all">${esc(chrome||'KHÔNG tìm thấy — cần fp-chrome.exe hoặc Chrome/Edge')}</div></div>
+          <div><div class="text-gray-500">Local API</div><div>http://127.0.0.1:${info.port} • token tại ${esc(info.tokenPath)}</div></div>
+          <div class="flex gap-2 pt-1">
+            <button onclick="Aether.openProfilesFolder()" class="px-3 py-1.5 rounded bg-[#27272a]">Mở thư mục profiles</button>
+          </div>
+        </div>`);
+    }
+
+    async function openMembersPanel(){
+      openPanel('Thành Viên Nhóm', `<div class="text-xs text-gray-400">Quản lý team & chia sẻ profile được thực hiện trên Sync server (đăng nhập ở mục Đồng Bộ Hóa). Owner có thể mời thành viên và chia sẻ profile cho team với vai trò owner/editor/launcher/viewer.</div>`);
+    }
+
+    // ===== Sync panel =====
+    async function openSyncPanel(){
+      const cfg = await A.getSyncConfig().catch(()=>({}));
+      openPanel('Đồng Bộ Hóa — Dùng chung tài khoản (đa máy)', `
+        <div class="text-[11px] text-gray-500 mb-2">Self-hosted server. Đăng nhập cùng tài khoản trên nhiều máy. Checkout lock chống mở cùng 1 profile cloud trên 2 máy (chống liên kết tài khoản). Blob đầy đủ mã hóa E2EE (AES-GCM).</div>
+        <input id="sp-url" class="gen-input w-full px-2 py-1 mb-2 text-sm rounded" placeholder="Server URL" value="${esc(cfg.serverUrl||'http://localhost:3456')}">
+        <div class="grid grid-cols-2 gap-2 mb-2">
+          <input id="sp-email" class="gen-input px-2 py-1 text-sm rounded" placeholder="email" value="test@aether.local">
+          <input id="sp-pass" type="password" class="gen-input px-2 py-1 text-sm rounded" placeholder="mật khẩu" value="test123">
+        </div>
+        <input id="sp-master" type="password" class="gen-input w-full px-2 py-1 mb-2 text-sm rounded" placeholder="Master passphrase cho E2EE (giống nhau mọi máy)">
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="doSyncLogin()" class="px-3 py-1 bg-[#3b82f6] rounded text-sm">Đăng nhập</button>
+          <button onclick="doSyncPull()" class="px-3 py-1 border border-[#3b82f6] rounded text-sm">Pull Metadata</button>
+          <button onclick="doBackup()" class="px-3 py-1 border border-[#22c55e] rounded text-sm">Backup (upload)</button>
+          <button onclick="doRestore()" class="px-3 py-1 border border-[#22c55e] rounded text-sm">Restore (tải & giải mã)</button>
+        </div>
+        <div id="sp-res" class="mt-2 text-[11px] text-gray-400 whitespace-pre-wrap"></div>`);
+    }
+    function spRes(t){ const e=document.getElementById('sp-res'); if(e) e.textContent=t; }
+    async function doSyncLogin(){ try{ const url=document.getElementById('sp-url').value.trim(); await A.saveSyncConfig({serverUrl:url}); const r=await A.syncLogin({serverUrl:url,email:document.getElementById('sp-email').value.trim(),password:document.getElementById('sp-pass').value}); spRes(r.ok?'✅ Đã kết nối server.':'Lỗi: '+JSON.stringify(r)); }catch(e){ spRes('Lỗi: '+e.message+'\\n(Chạy server: cd server && npm start)'); } }
+    async function doSyncPull(){ try{ const r=await A.syncPull(); spRes('✅ Đã pull. '+(r.checkoutCount||0)+' đang checkout.'); await reload(); }catch(e){ spRes('Lỗi pull: '+e.message); } }
+    async function doBackup(){ const m=document.getElementById('sp-master').value; if(!m){spRes('Nhập master passphrase');return;} const c=profiles.find(p=>p.location==='cloud')||profiles[0]; if(!c){spRes('Không có hồ sơ');return;} try{ await A.syncBackupCloudProfile(c.id,m); spRes('✅ Đã backup '+c.name+' (E2EE GCM)'); }catch(e){ spRes('Lỗi backup: '+e.message); } }
+    async function doRestore(){ const m=document.getElementById('sp-master').value; if(!m){spRes('Nhập master passphrase');return;} const c=profiles.find(p=>p.location==='cloud')||profiles[0]; if(!c){spRes('Không có hồ sơ');return;} try{ await A.syncRestoreCloudProfile(c.id,m); spRes('✅ Đã restore '+c.name); await reload(); }catch(e){ spRes('Lỗi restore: '+e.message); } }
+
+    function setHint(t){ document.getElementById('toolbar-hint').textContent=t; }
+
+    // init
+    A.onRunningChanged((list)=>{ runningIds = new Set(list.map(r=>r.id)); renderTable(); });
+    A.getChromePath().then(p=>{ document.getElementById('engine-path').textContent = p ? (p.includes('fp-chrome')?'fp-chrome (native)':p.split(/[\\\\/]/).pop()) : 'KHÔNG tìm thấy'; });
+    document.addEventListener('keydown',e=>{ if(e.key==='/' && document.activeElement.tagName==='BODY'){e.preventDefault();document.getElementById('search').focus();} });
+    reload();
+  </script>
+</body>
+</html>

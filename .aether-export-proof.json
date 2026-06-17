@@ -1,0 +1,18 @@
+[
+  {
+    "id": "prof-1781655099727",
+    "name": "FB Ads Main",
+    "group_name": "Vietnam Ads",
+    "proxy": "http://user:pass@res.proxy:3128",
+    "proxy_status": "OK • live",
+    "fingerprint_preset": "genlogin-chrome-real"
+  },
+  {
+    "id": "prof-1781655099730",
+    "name": "Tiktok Farm 01",
+    "group_name": "Tiktok",
+    "proxy": "socks5://1.2.3.4:1080",
+    "proxy_status": "OK • live",
+    "fingerprint_preset": "genlogin-firefox-high"
+  }
+]

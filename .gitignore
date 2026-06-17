@@ -1,0 +1,17 @@
+node_modules/
+server/node_modules/
+
+# goal/proof artifacts
+.proof-*
+.test-*
+*.db
+*.db-shm
+*.db-wal
+aether.db
+server/data/
+
+# large third-party engine binaries (keep out of git; distribute separately)
+fingerprint-data/build/*.exe
+
+# allow proof evidence (screenshots/logs) to be committed
+!docs/proof/**

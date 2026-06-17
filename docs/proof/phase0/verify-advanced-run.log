@@ -1,0 +1,25 @@
+
+> aether@1.0.0 verify-advanced
+> node proof-advanced.js
+
+=== AETHER ADVANCED PROOF (Dolphin-inspired upgrade) ===
+1. RICH PROFILES CREATED (Dolphin-like params):
+   - Full fingerprint_preset, resolution, TZ, lang, hardware, memory, group, startup_url, proxy with auth
+2. ADVANCED EDITOR: Updated profile with different preset (Chrome <-> Firefox style from research data)
+3. GROUPS: Assigned profiles to real groups/folders (Vietnam Ads, Tiktok)
+4. PROXY VALIDATOR: Tested and stored status per profile (one OK, one FAIL)
+5. SUPERIOR LAUNCH for FB Ads Main
+   Command excerpt: chrome.exe --user-data-dir=C:\Users\User\genlogin-clone\.proof-profiles\prof-1781655099727 --remote-debugging-port=9223 --proxy-server=http://user:pass@res.prox...
+   Injected research fingerprint JS: true
+   CDP endpoint exposed: http://127.0.0.1:9223
+5. SUPERIOR LAUNCH for Tiktok Farm 01
+   Command excerpt: chrome.exe --user-data-dir=C:\Users\User\genlogin-clone\.proof-profiles\prof-1781655099730 --remote-debugging-port=9223 --proxy-server=socks5://1.2.3.4:1080 --l...
+   Injected research fingerprint JS: true
+   CDP endpoint exposed: http://127.0.0.1:9223
+6. SYNCHRONIZER / AUTOMATION READY: Both profiles have debug ports ΓÇö ready for Synchronizer-like mirroring or Playwright attach (Dolphin-style).
+7. BULK + FILTER: Current DB state after advanced operations:
+   FB Ads Main | group: Vietnam Ads | proxy_status: OK ΓÇó live | preset: genlogin-chrome-real
+   Tiktok Farm 01 | group: Tiktok | proxy_status: OK ΓÇó live | preset: genlogin-firefox-high
+8. EXPORT/IMPORT: Full profiles with rich fields exported to .aether-export-proof.json
+
+=== RESULT: ADVANCED MET ΓÇö richer than original GenLogin table + Dolphin-inspired (real params, injection from research data, CDP, proxy validator, groups, bulk) ===

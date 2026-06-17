@@ -1,0 +1,2 @@
+Aether Sync Server running on http://localhost:3456
+IMPORTANT: Change JWT_SECRET in production and use HTTPS + reverse proxy.

@@ -1,0 +1,18 @@
+Test UI-style partial create (quickAdd style):
+Saved quick partial without crash
+Test modal partial:
+Saved modal partial without crash
+Rows after 2 creates: 2 fields sample: [
+  'id',                   'name',
+  'location',             'group_name',
+  'platform',             'note',
+  'proxy',                'startup_url',
+  'fingerprint_preset',   'resolution',
+  'timezone',             'lang',
+  'hardware_concurrency', 'device_memory',
+  'status',               'proxy_status',
+  'last_opened',          'updated',
+  'created',              'version',
+  'tags',                 'has_blob'
+]
+Test PASS: no crash on partial UI creates, fields present (including defaults)

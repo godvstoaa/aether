@@ -1,0 +1,14 @@
+
+> aether@1.0.0 verify
+> node proof-verify.js
+
+=== GENLOGIN-CLONE GOAL PROOF SCRIPT ===
+Date: 2026-06-17T00:11:39.429Z
+1. SEED/LOAD: OK ΓÇö 20 profiles (matches screenshot names)
+2. CRUD + PERSIST: OK ΓÇö created + saved custom proxy profile. Found after reload: true proxy= http://127.0.0.1:9999
+3. LAUNCH SIM (real isolation prep): "C:\Program Files\Google\Chrome\Application\chrome.exe" --user-data-dir=C:\Users\User\genlogin-clone\.proof-userdata\profiles\proof-17816550...
+4. ISOLATION + PROXY APPLIED: dir created= true marker= true
+   lastOpened updated= true
+5. RESEARCH DATA (Genlogin-1.5 fingerprints): present= true dir= C:\Users\User\genlogin-clone\fingerprint-data\data-browser-profile
+6. FINAL STATE: total profiles= 21 with custom proxy one= true
+=== RESULT === MET (core proofs passed)

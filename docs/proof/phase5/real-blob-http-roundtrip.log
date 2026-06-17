@@ -1,0 +1,2 @@
+=== REAL BLOB ROUNDTRIP via HTTP /blob (GCM client + multer server) ===
+BLOB_FAIL connect ECONNREFUSED 127.0.0.1:14678
